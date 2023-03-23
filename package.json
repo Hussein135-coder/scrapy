@@ -1,0 +1,25 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build" : "netlify build" ,
+    "link" : "netlify link",
+    "deploy" : "netlify deploy --prod"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "netlify": "^13.1.3",
+    "netlify-cli": "^13.2.1",
+    "netlify-lambda": "^2.0.16",
+    "nodemon": "^2.0.22",
+    "puppeteer": "^19.7.5"
+  }
+}
