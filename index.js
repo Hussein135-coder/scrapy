@@ -15,7 +15,7 @@ var con = mysql.createConnection({
 const app = express();
 
 // Handling GET request
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 	scrapeAll()
 	res.send('test')
 	res.end()
