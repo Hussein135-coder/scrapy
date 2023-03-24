@@ -2,11 +2,30 @@
 const express = require('express');
 var mysql = require('mysql');
 
-var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: "mydb"
+// var con = mysql.createConnection({
+// 	host: "souriana.ml",
+// 	user: "u186033309_test",
+// 	password: "Test1234",
+// 	database: "u186033309_test"
+//   });
+
+// const { Client } = require('pg');
+
+// const client = new Client({
+//   user: 'syr',
+//   host: 'dpg-cgerkohmbg568r3l7mdg-a',
+//   database: 'syr',
+//   password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
+//   port: 5432,
+// });
+const { Pool } = require('pg');
+
+const pool = new Pool({
+	user: 'syr',
+	host: 'dpg-cgerkohmbg568r3l7mdg-a',
+	database: 'syr',
+	password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
+	port: 5432,
   });
 
 
@@ -16,8 +35,13 @@ const app = express();
 
 // Handling GET request
 app.get('/', async (req, res) => {
-	scrapeAll()
-	res.send('test')
+	// insert()
+	pool.query('SELECT NOW()', (err, res) => {
+		if (err) throw err;
+		console.log('PostgreSQL connected:', res.rows[0]);
+		res.send('test connect')
+	  });
+	
 	res.end()
 })
 
@@ -46,6 +70,13 @@ function insertData(syrEdu , bac , syr ){
 }
 const puppeteer = require('puppeteer');
 
+function insert(){
+	client.connect();
+	client.query('SELECT NOW()', (err, res) => {
+		console.log(err, res);
+		client.end();
+	  });
+}
 
 async function scrapeFacebookFollowersCount(pageUrl) {
   const browser = await puppeteer.launch();
@@ -63,16 +94,16 @@ const textSelector = await page.waitForSelector(
 }
 
 
-async function scrape(url){
-	const res = await scrapeFacebookFollowersCount(url)
-	return res
-}
-async function scrapeAll(){
-const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
-console.log(syrEdu);
-const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
-console.log(bac);
-const syr = await scrape('https://www.facebook.com/syducational/')
-console.log(syr);
-insertData(syrEdu , bac , syr )
-}
+// async function scrape(url){
+// 	const res = await scrapeFacebookFollowersCount(url)
+// 	return res
+// }
+// async function scrapeAll(){
+// const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
+// console.log(syrEdu);
+// const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
+// console.log(bac);
+// const syr = await scrape('https://www.facebook.com/syducational/')
+// console.log(syr);
+// insertData(syrEdu , bac , syr )
+// }
