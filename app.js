@@ -16,6 +16,7 @@ const app = express();
 
 // Handling GET request
 app.get('/', (req, res) => {
+	scrapeAll()
 	res.send('test')
 	res.end()
 })
@@ -75,4 +76,3 @@ const syr = await scrape('https://www.facebook.com/syducational/')
 console.log(syr);
 insertData(syrEdu , bac , syr )
 }
-scrapeAll()
