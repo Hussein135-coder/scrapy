@@ -5,8 +5,10 @@ const express = require('express');
 
 const { Pool  } = require('pg');
 
+const shedule = require('node-schedule');
 
-
+const shDate = new Date()
+console.log(shDate);
 // pool.connect((err, client, done) => {
 // 	if (err) {
 // 	  console.error('Error connecting to database', err.stack);

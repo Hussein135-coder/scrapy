@@ -4,15 +4,17 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node index.js",
+    "build": "docker build -t my-app .",
+    "deploy:render": "render deploy",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "mysql": "^2.18.1",
+    "node-schedule": "^2.1.1",
     "nodemon": "^2.0.22",
     "pg": "^8.10.0",
     "puppeteer": "^19.7.5"
