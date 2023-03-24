@@ -43,7 +43,9 @@ app.listen(PORT,console.log(
 const puppeteer = require('puppeteer');
 
 async function scrapeFacebookFollowersCount(pageUrl) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+	executablePath: '/usr/bin/google-chrome-unstable'
+  });
   const page = await browser.newPage();
 
   await page.goto(pageUrl);
@@ -81,13 +83,13 @@ function scrapeAll(res){
 		  console.log('Connected to database');
 		const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
 		console.log(syrEdu);
-		insertData( client ,"syrEdu2" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
+		insertData( client ,"syrEdu3" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
 		const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
 		console.log(bac);
-		insertData( client ,"bac2" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
+		insertData( client ,"bac3" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
 		const syr = await scrape('https://www.facebook.com/syducational/')
 		console.log(syr);
-		insertData(client ,"syr2" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
+		insertData(client ,"syr3" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
 		selectData(pool,res)
 		  }});
 
