@@ -43,9 +43,7 @@ app.listen(PORT,console.log(
 const puppeteer = require('puppeteer');
 
 async function scrapeFacebookFollowersCount(pageUrl) {
-  const browser = await puppeteer.launch({
-	executablePath: '/usr/bin/google-chrome-unstable'
-  });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
   await page.goto(pageUrl);
