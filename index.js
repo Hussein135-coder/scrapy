@@ -1,33 +1,29 @@
 // Requiring module
 const express = require('express');
-var mysql = require('mysql');
 
-// var con = mysql.createConnection({
-// 	host: "souriana.ml",
-// 	user: "u186033309_test",
-// 	password: "Test1234",
-// 	database: "u186033309_test"
-//   });
 
-// const { Client } = require('pg');
 
-// const client = new Client({
-//   user: 'syr',
-//   host: 'dpg-cgerkohmbg568r3l7mdg-a',
-//   database: 'syr',
-//   password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
-//   port: 5432,
-// });
-const { Pool } = require('pg');
+const { Pool  } = require('pg');
 
-const pool = new Pool({
-	user: 'syr',
-	host: 'dpg-cgerkohmbg568r3l7mdg-a',
-	database: 'syr',
-	password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
-	port: 5432,
-  });
+const pool  = new Pool ({
+  user: 'syr',
+  host: 'dpg-cgerkohmbg568r3l7mdg-a',
+  database: 'syr',
+  password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
+  port: 5432,
+  connectionTimeoutMillis: 5000,
+  ssl : true
+});
 
+// pool.connect((err, client, done) => {
+// 	if (err) {
+// 	  console.error('Error connecting to database', err.stack);
+// 	} else {
+// 	  console.log('Connected to database');
+
+// 		pool.end();
+// 	  }});
+	
 
 
 // Creating express object
@@ -35,14 +31,10 @@ const app = express();
 
 // Handling GET request
 app.get('/', async (req, res) => {
-	// insert()
-	pool.query('SELECT NOW()', (err, res) => {
-		if (err) throw err;
-		console.log('PostgreSQL connected:', res.rows[0]);
-		res.send('test connect')
-	  });
-	
-	res.end()
+    // scrapeAll()
+	selectData(res)
+	// res.send('test')
+	// res.end()
 })
 
 // Port Number
@@ -53,30 +45,26 @@ const PORT = process.env.PORT ||5000;
 app.listen(PORT,console.log(
 `Server started on port ${PORT}`));
 
-function insertData(syrEdu , bac , syr ){
-	con.connect(function(err) {
-		if (err) throw err;
-		console.log("Connected!");
-		var sql = `INSERT INTO customers (test,name, address) VALUES 
-		('${parseFloat(syrEdu.slice(0,-16).replace(/,/g, ''))}', 'Highway 31','asdasd'),
-		('${parseFloat(bac.slice(0,-16).replace(/,/g, ''))}', 'Highway 32','asdasd'),
-		('${parseFloat(syr.slice(0,-16).replace(/,/g, ''))}', 'Highway 33','asdasd')
-		`;
-		con.query(sql, function (err, result) {
-		  if (err) throw err;
-		  console.log("1 record inserted");
-		});
-	  });
-}
+// function insertData(syrEdu , bac , syr ){
+// 	con.connect(function(err) {
+// 		if (err) throw err;
+// 		console.log("Connected!");
+// 		var sql = `INSERT INTO customers (test,name, address) VALUES 
+// 		('${parseFloat(syrEdu.slice(0,-16).replace(/,/g, ''))}', 'Highway 31','asdasd'),
+// 		('${parseFloat(bac.slice(0,-16).replace(/,/g, ''))}', 'Highway 32','asdasd'),
+// 		('${parseFloat(syr.slice(0,-16).replace(/,/g, ''))}', 'Highway 33','asdasd')
+// 		`;
+// 		con.query(sql, function (err, result) {
+// 		  if (err) throw err;
+// 		  console.log("1 record inserted");
+// 		});
+// 	  });
+// }
 const puppeteer = require('puppeteer');
 
-function insert(){
-	client.connect();
-	client.query('SELECT NOW()', (err, res) => {
-		console.log(err, res);
-		client.end();
-	  });
-}
+
+
+
 
 async function scrapeFacebookFollowersCount(pageUrl) {
   const browser = await puppeteer.launch();
@@ -94,16 +82,65 @@ const textSelector = await page.waitForSelector(
 }
 
 
-// async function scrape(url){
-// 	const res = await scrapeFacebookFollowersCount(url)
-// 	return res
-// }
-// async function scrapeAll(){
-// const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
-// console.log(syrEdu);
-// const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
-// console.log(bac);
-// const syr = await scrape('https://www.facebook.com/syducational/')
-// console.log(syr);
-// insertData(syrEdu , bac , syr )
-// }
+async function scrape(url){
+	const res = await scrapeFacebookFollowersCount(url)
+	return res
+}
+
+
+function scrapeAll(){
+	pool.connect(async (err, client, done) => {
+		if (err) {
+		  console.error('Error connecting to database', err.stack);
+		} else {
+		  console.log('Connected to database');
+		const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
+		console.log(syrEdu);
+		insertData( client ,"syrEdu" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
+		const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
+		console.log(bac);
+		insertData( client ,"bac" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
+		const syr = await scrape('https://www.facebook.com/syducational/')
+		console.log(syr);
+		insertData(client ,"syr" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
+			pool.end();
+		  }});
+
+}
+
+function insertData(client,name,likes){
+	const insertQuery = 'INSERT INTO pages(name, likes) VALUES($1, $2)';
+	const values = [name, likes];
+	client.query(insertQuery, values, (err, result) => {
+	  if (err) {
+		console.error('Error executing query', err.stack);
+	  } else {
+		console.log('Data inserted successfully');
+	  }})
+}
+
+function selectData(res){
+	let data =[]
+
+	pool.connect( (err, client, done) => {
+		if (err) {
+		  console.error('Error connecting to database', err.stack);
+		} else {
+		  console.log('Connected to database');
+		  const selectQuery = 'SELECT * FROM pages';
+	  
+		  client.query(selectQuery, (err, result) => {
+			if (err) {
+			  console.error('Error executing query', err.stack);
+			} else {
+			  // Display the results
+			  result.rows.forEach(row => data.push({"name" : row.name, "likes" : row.likes }));
+			  res.send(data)
+			  res.end()
+			}})
+			pool.end();
+		  }});
+
+
+	
+}
