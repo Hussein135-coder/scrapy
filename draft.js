@@ -55,3 +55,19 @@
 // 	password: "Test1234",
 // 	database: "u186033309_test"
 //   });
+
+// function insertData(syrEdu , bac , syr ){
+// 	con.connect(function(err) {
+// 		if (err) throw err;
+// 		console.log("Connected!");
+// 		var sql = `INSERT INTO customers (test,name, address) VALUES 
+// 		('${parseFloat(syrEdu.slice(0,-16).replace(/,/g, ''))}', 'Highway 31','asdasd'),
+// 		('${parseFloat(bac.slice(0,-16).replace(/,/g, ''))}', 'Highway 32','asdasd'),
+// 		('${parseFloat(syr.slice(0,-16).replace(/,/g, ''))}', 'Highway 33','asdasd')
+// 		`;
+// 		con.query(sql, function (err, result) {
+// 		  if (err) throw err;
+// 		  console.log("1 record inserted");
+// 		});
+// 	  });
+// }

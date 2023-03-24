@@ -5,15 +5,7 @@ const express = require('express');
 
 const { Pool  } = require('pg');
 
-const pool  = new Pool ({
-  user: 'syr',
-  host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
-  database: 'syr',
-  password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
-  port: 5432,
-  connectionTimeoutMillis: 5000,
-  ssl : true
-});
+
 
 // pool.connect((err, client, done) => {
 // 	if (err) {
@@ -31,8 +23,8 @@ const app = express();
 
 // Handling GET request
 app.get('/', async (req, res) => {
-    // scrapeAll()
-	selectData(res)
+	scrapeAll(res)
+
 	// res.send('test')
 	// res.end()
 })
@@ -45,26 +37,8 @@ const PORT = process.env.PORT ||5000;
 app.listen(PORT,console.log(
 `Server started on port ${PORT}`));
 
-// function insertData(syrEdu , bac , syr ){
-// 	con.connect(function(err) {
-// 		if (err) throw err;
-// 		console.log("Connected!");
-// 		var sql = `INSERT INTO customers (test,name, address) VALUES 
-// 		('${parseFloat(syrEdu.slice(0,-16).replace(/,/g, ''))}', 'Highway 31','asdasd'),
-// 		('${parseFloat(bac.slice(0,-16).replace(/,/g, ''))}', 'Highway 32','asdasd'),
-// 		('${parseFloat(syr.slice(0,-16).replace(/,/g, ''))}', 'Highway 33','asdasd')
-// 		`;
-// 		con.query(sql, function (err, result) {
-// 		  if (err) throw err;
-// 		  console.log("1 record inserted");
-// 		});
-// 	  });
-// }
+
 const puppeteer = require('puppeteer');
-
-
-
-
 
 async function scrapeFacebookFollowersCount(pageUrl) {
   const browser = await puppeteer.launch();
@@ -88,7 +62,16 @@ async function scrape(url){
 }
 
 
-function scrapeAll(){
+function scrapeAll(res){
+	const pool  = new Pool ({
+		user: 'syr',
+		host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
+		database: 'syr',
+		password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
+		port: 5432,
+		connectionTimeoutMillis: 5000,
+		ssl : true
+	  });
 	pool.connect(async (err, client, done) => {
 		if (err) {
 		  console.error('Error connecting to database', err.stack);
@@ -96,14 +79,14 @@ function scrapeAll(){
 		  console.log('Connected to database');
 		const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
 		console.log(syrEdu);
-		insertData( client ,"syrEdu" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
+		insertData( client ,"syrEdu2" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
 		const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
 		console.log(bac);
-		insertData( client ,"bac" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
+		insertData( client ,"bac2" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
 		const syr = await scrape('https://www.facebook.com/syducational/')
 		console.log(syr);
-		insertData(client ,"syr" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
-			pool.end();
+		insertData(client ,"syr2" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
+		selectData(pool,res)
 		  }});
 
 }
@@ -119,7 +102,8 @@ function insertData(client,name,likes){
 	  }})
 }
 
-function selectData(res){
+function selectData(pool,res){
+
 	let data =[]
 
 	pool.connect( (err, client, done) => {
@@ -138,9 +122,6 @@ function selectData(res){
 			  res.send(data)
 			  res.end()
 			}})
-			pool.end();
+			pool.end()
 		  }});
-
-
-	
 }
