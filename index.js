@@ -1,6 +1,6 @@
 // Requiring module
 const express = require('express');
-
+const cors = require('cors');
 const { Pool  } = require('pg');
 
 const puppeteer = require('puppeteer');
@@ -10,6 +10,13 @@ const shedule = require('node-schedule');
 // Creating express object
 const app = express();
 
+const allowedOrigins = ['https://syr-edu.netlify.app/', 'https://souriana.ml'];
+app.use(
+	cors({
+		origin: allowedOrigins
+	})
+  );
+  
 // Handling GET request
 app.get('/now', async (req, res) => {
 	selectData(res,'pages')
