@@ -7,17 +7,6 @@ const { Pool  } = require('pg');
 
 const shedule = require('node-schedule');
 
-const shDate = new Date()
-console.log(shDate);
-// pool.connect((err, client, done) => {
-// 	if (err) {
-// 	  console.error('Error connecting to database', err.stack);
-// 	} else {
-// 	  console.log('Connected to database');
-
-// 		pool.end();
-// 	  }});
-	
 
 
 // Creating express object
@@ -25,10 +14,7 @@ const app = express();
 
 // Handling GET request
 app.get('/', async (req, res) => {
-	scrapeAll(res)
-
-	// res.send('test')
-	// res.end()
+	res.send('test')
 })
 
 // Port Number
@@ -64,7 +50,13 @@ async function scrape(url){
 }
 
 
-function scrapeAll(res){
+function scrapeAll(){
+	const d = new Date();
+	const year = d.getFullYear().toString();
+	const month = (d.getMonth() + 1).toString().padStart(2, '0');
+	const day = d.getDate().toString().padStart(2, '0');
+	const date = `${year}/${month}/${day}`;
+
 	const pool  = new Pool ({
 		user: 'syr',
 		host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
@@ -73,34 +65,34 @@ function scrapeAll(res){
 		port: 5432,
 		connectionTimeoutMillis: 5000,
 		ssl : true
-	  });
+	});
+
 	pool.connect(async (err, client, done) => {
 		if (err) {
 		  console.error('Error connecting to database', err.stack);
 		} else {
 		  console.log('Connected to database');
+		  console.log(date);
 		const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
 		console.log(syrEdu);
-		insertData( client ,"syrEdu3" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')) )
+		updateData( client ,"سوريانا التعليمية" ,parseFloat(syrEdu.slice(0,-16).replace(/,/g, '')),date,1 )
 		const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
 		console.log(bac);
-		insertData( client ,"bac3" , parseFloat(bac.slice(0,-16).replace(/,/g, '')) )
+		updateData( client ,"بكالوريا سوريا" , parseFloat(bac.slice(0,-16).replace(/,/g, '')),date,2 )
 		const syr = await scrape('https://www.facebook.com/syducational/')
 		console.log(syr);
-		insertData(client ,"syr3" , parseFloat(syr.slice(0,-16).replace(/,/g, '')) )
-		selectData(pool,res)
+		updateData(client ,"سوريا التعليمية" , parseFloat(syr.slice(0,-16).replace(/,/g, '')),date,3 )
 		  }});
-
 }
 
-function insertData(client,name,likes){
-	const insertQuery = 'INSERT INTO pages(name, likes) VALUES($1, $2)';
-	const values = [name, likes];
-	client.query(insertQuery, values, (err, result) => {
+function updateData(client,name,likes,date,id){
+	const updateQuery = `UPDATE public.pages SET name='${name}', likes=${likes}, date='${date}' WHERE id=${id};`;
+	// const values = [name, likes , date, id];
+	client.query(updateQuery, (err, result) => {
 	  if (err) {
 		console.error('Error executing query', err.stack);
 	  } else {
-		console.log('Data inserted successfully');
+		console.log('Data updated successfully');
 	  }})
 }
 
@@ -127,3 +119,16 @@ function selectData(pool,res){
 			pool.end()
 		  }});
 }
+
+// shedule.scheduleJob("0 0 * * *",function () {
+// 	scrapeAll()
+// })
+let count = 0 ;
+shedule.scheduleJob("0 * * * *",function () {
+	console.log(count++);
+})
+const d =new Date();
+const date = d.toISOString().slice(0, 10).replace('T', ' ').replace(/-/g,'/')
+
+console.log(typeof date);
+// scrapeAll()
