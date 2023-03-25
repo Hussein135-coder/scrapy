@@ -10,11 +10,8 @@ const shedule = require('node-schedule');
 // Creating express object
 const app = express();
 
-const allowedOrigins = ['https://syr-edu.netlify.app/', 'https://souriana.ml'];
 app.use(
-	cors({
-		origin: allowedOrigins
-	})
+	cors()
   );
   
 // Handling GET request
