@@ -7,6 +7,16 @@ const puppeteer = require('puppeteer');
 const shedule = require('node-schedule');
 
 
+const pool  = new Pool ({
+	user: 'syr',
+	host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
+	database: 'syr',
+	password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
+	port: 5432,
+	connectionTimeoutMillis: 5000,
+	max: 20,
+	ssl : true
+});
 // Creating express object
 const app = express();
 
@@ -64,15 +74,6 @@ function scrapeAll(){
 	const day = d.getDate().toString().padStart(2, '0');
 	const date = `${year}/${month}/${day}`;
 
-	const pool  = new Pool ({
-		user: 'syr',
-		host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
-		database: 'syr',
-		password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
-		port: 5432,
-		connectionTimeoutMillis: 5000,
-		ssl : true
-	});
 
 	pool.connect(async (err, client, done) => {
 		if (err) {
@@ -89,6 +90,7 @@ function scrapeAll(){
 		const syr = await scrape('https://www.facebook.com/syducational/')
 		console.log(syr);
 		updateData(client ,"سوريا التعليمية" , parseFloat(syr.slice(0,-16).replace(/,/g, '')),date,3,'syr' )
+		client.release();
 		  }});
 }
 
@@ -110,19 +112,9 @@ function updateData(client,name,likes,date,id,table){
 }
 
 function selectData(res,table){
-	const pool1  = new Pool ({
-		user: 'syr',
-		host: 'dpg-cgerkohmbg568r3l7mdg-a.oregon-postgres.render.com',
-		database: 'syr',
-		password: 'yKoLSyhc5sdoryIptjg7cHq4Hc9T92Tt',
-		port: 5432,
-		connectionTimeoutMillis: 5000,
-		ssl : true
-	});
-
 	let data =[]
 
-	pool1.connect( (err, client, done) => {
+	pool.connect( (err, client, done) => {
 		if (err) {
 		  console.error('Error connecting to database', err.stack);
 		} else {
@@ -139,7 +131,7 @@ function selectData(res,table){
 				res.send(data)
 				res.end()
 				}})
-			pool1.end()
+			    client.release();
 		  }});
 }
 
