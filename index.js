@@ -19,6 +19,16 @@ const pool  = new Pool ({
 	max: 20,
 	ssl : true
 });
+
+// Set up variables
+const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
+const hussein = '245853116';
+const saleh = '312877637'
+const deaa = '496497144'
+
+// Create a new bot instance
+const bot = new TelegramBot(TOKEN, { polling: true });
+
 // Creating express object
 const app = express();
 
@@ -175,17 +185,10 @@ const takeScreen = async () => {
 
 
 const sendTelegram = ()=>{
-// Set up variables
-const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
-const hussein = '245853116';
-const saleh = '312877637'
-const deaa = '496497144'
-
-// Create a new bot instance
-const bot = new TelegramBot(TOKEN, { polling: true });
 
 bot.on('message', (msg) => {
 	if(msg['text'] == "احصائيات"){
+		bot.sendMessage(msg['chat']['id'], 'يتم الان جلب الصورة...')
 		takeScreen()
 		setTimeout(() => {
 			bot.sendPhoto(msg['chat']['id'], 'syr.png')
@@ -212,16 +215,6 @@ bot.on('message', (msg) => {
 sendTelegram();
 
 const sendPhotoTelegram = ()=>{
-	// Set up variables
-	const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
-	const hussein = '245853116';
-	const saleh = '312877637'
-	const deaa = '496497144'
-	
-	const users = [hussein,saleh,deaa];
-	// Create a new bot instance
-	const bot = new TelegramBot(TOKEN, { polling: true });
-
 	users.forEach(user => {
 		bot.sendPhoto(user, 'syr.png')
 			.then(() => {
