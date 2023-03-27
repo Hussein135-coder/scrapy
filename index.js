@@ -1,6 +1,8 @@
 // Requiring module
 const express = require('express');
 const cors = require('cors');
+const TelegramBot = require('node-telegram-bot-api');
+
 const { Pool  } = require('pg');
 
 const puppeteer = require('puppeteer');
@@ -96,7 +98,7 @@ function scrapeAll(){
 
 function updateData(client,name,likes,date,id,table){
 	const updateQuery = `UPDATE public.pages SET name='${name}', likes=${likes}, date='${date}' WHERE id=${id};`;
-    const insertQuery = `INSERT INTO public.${table} (name, likes, date, page_id) VALUES ('${name}', ${likes}, '${date}',${id});`
+    const insertQuery = `INSERT INTO public.${table} (name, likes, date) VALUES ('${name}', ${likes}, '${date}');`
 	client.query(updateQuery, (err, result) => {
 	  if (err) {
 		console.error('Error executing query', err.stack);
@@ -135,7 +137,103 @@ function selectData(res,table){
 		  }});
 }
 
-shedule.scheduleJob("0 0 * * *",function () {
+shedule.scheduleJob("0 21 * * *",function () {
 	scrapeAll()
 })
 
+const takeScreen = async () => {
+	const browser = await puppeteer.launch();
+	const page = await browser.newPage();
+
+	await page.goto('https://souriana.ml/login',{ timeout: 60000 });
+
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	await page.evaluate(() => {
+		document.querySelector("#name").value = 'Hussein';
+		document.querySelector("#password").value = '6292';
+		document.querySelector('#login-btn').click()
+		
+	});
+
+	await page.setViewport({width: 1920, height: 1080});
+
+	await new Promise(resolve => setTimeout(resolve, 35000));
+
+	await page.screenshot({
+		path: 'syr.png',
+		fullPage: true 
+	  })
+
+	await browser.close();
+	console.log('screenshot taken');
+  }
+
+  shedule.scheduleJob("5 21 * * *",function () {
+	takeScreen()
+})
+
+
+const sendTelegram = ()=>{
+// Set up variables
+const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
+const hussein = '245853116';
+const saleh = '312877637'
+const deaa = '496497144'
+
+// Create a new bot instance
+const bot = new TelegramBot(TOKEN, { polling: true });
+
+bot.on('message', (msg) => {
+	if(msg['text'] == "احصائيات"){
+		takeScreen()
+		setTimeout(() => {
+			bot.sendPhoto(msg['chat']['id'], 'syr.png')
+			.then(() => {
+				console.log('Photo sent successfully');
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+		}, 60000);
+		
+	}else{
+		bot.sendMessage(msg['chat']['id'], 'ارسل كلمة احصائيات')
+		.then(() => {
+			console.log('Photo sent successfully');
+		  })
+		  .catch((error) => {
+			console.error(error);
+		  });
+	}
+
+  });
+}
+sendTelegram();
+
+const sendPhotoTelegram = ()=>{
+	// Set up variables
+	const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
+	const hussein = '245853116';
+	const saleh = '312877637'
+	const deaa = '496497144'
+	
+	const users = [hussein,saleh,deaa];
+	// Create a new bot instance
+	const bot = new TelegramBot(TOKEN, { polling: true });
+
+	users.forEach(user => {
+		bot.sendPhoto(user, 'syr.png')
+			.then(() => {
+				console.log('Photo sent successfully');
+			  })
+			  .catch((error) => {
+				console.error(error);
+			  });
+	  });
+			
+	}
+
+	shedule.scheduleJob("8 21 * * *",function () {
+		sendPhotoTelegram()
+	})
