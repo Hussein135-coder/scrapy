@@ -21,11 +21,13 @@ const pool  = new Pool ({
 });
 
 // Set up variables
+// const TOKEN = '6050511857:AAFfF5q2EflHpuSbKvhGD-FLNzrSosdeIXM';
 const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
 const hussein = '245853116';
 const saleh = '312877637'
 const deaa = '496497144'
 
+const users = [hussein,saleh,deaa]
 // Create a new bot instance
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -83,7 +85,7 @@ function scrapeAll(){
 	const d = new Date();
 	const year = d.getFullYear().toString();
 	const month = (d.getMonth() + 1).toString().padStart(2, '0');
-	const day = d.getDate().toString().padStart(2, '0');
+	const day = (d.getDate() + 1).toString().padStart(2, '0');
 	const date = `${year}/${month}/${day}`;
 
 
@@ -203,7 +205,7 @@ bot.on('message', (msg) => {
 	}else{
 		bot.sendMessage(msg['chat']['id'], 'ارسل كلمة احصائيات')
 		.then(() => {
-			console.log('Photo sent successfully');
+			console.log('Message sent successfully');
 		  })
 		  .catch((error) => {
 			console.error(error);
