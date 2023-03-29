@@ -225,7 +225,7 @@ const sendTelegram = () => {
 			bot.sendMessage(msg['chat']['id'], 'يتم الحصول على السرعة')
 			takeSpeedScreen()
 			setTimeout(() => {
-				bot.sendPhoto(msg['chat']['id'], 'speed.png')
+				bot.sendPhoto(msg['chat']['id'], 'speed1.png')
 					.then(() => {
 						console.log('Photo sent successfully');
 					})
@@ -263,9 +263,10 @@ const takeSpeedScreen = async () => {
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 
-	await page.goto('https://fast.com/', { timeout: 60000 });
+	await page.goto('https://fast.com', { timeout: 60000 });
 console.log(1);
 await new Promise(resolve => setTimeout(resolve, 5000));
+
 
 console.log(2);
 await page.setViewport({ width: 1920, height: 1080 });
@@ -273,12 +274,12 @@ await page.setViewport({ width: 1920, height: 1080 });
 await new Promise(resolve => setTimeout(resolve, 35000));
 
 	console.log(3);
-
-await page.screenshot({
-		path: 'speed.png',
-		fullPage: true,
-	  });
-
+	
+	await page.screenshot({
+		path: 'speed1.png',
+	});
+	
+	console.log(4);
 	await browser.close();
 	console.log('screenshot taken');
 }
