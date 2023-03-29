@@ -275,8 +275,7 @@ await new Promise(resolve => setTimeout(resolve, 35000));
 	console.log(3);
 
 	await page.screenshot({
-		path: 'speed.png',
-		fullPage: true
+		path: 'speed.png'
 	  });
 
 	await browser.close();
