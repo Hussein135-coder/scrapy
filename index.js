@@ -25,8 +25,8 @@ const pool = new Pool({
 
 // Set up variables
 //test bot
-const TOKEN = '6050511857:AAFfF5q2EflHpuSbKvhGD-FLNzrSosdeIXM';
-// const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
+// const TOKEN = '6050511857:AAFfF5q2EflHpuSbKvhGD-FLNzrSosdeIXM';
+const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
 const hussein = '245853116';
 const saleh = '312877637'
 const deaa = '496497144'
