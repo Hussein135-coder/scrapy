@@ -1,7 +1,10 @@
 // Requiring module
 const express = require('express');
+const axios = require('axios')
 const cors = require('cors');
+const cheerio = require('cheerio');
 const TelegramBot = require('node-telegram-bot-api');
+
 
 const { Pool } = require('pg');
 
@@ -21,13 +24,15 @@ const pool = new Pool({
 });
 
 // Set up variables
-// const TOKEN = '6050511857:AAFfF5q2EflHpuSbKvhGD-FLNzrSosdeIXM';
-const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
+//test bot
+const TOKEN = '6050511857:AAFfF5q2EflHpuSbKvhGD-FLNzrSosdeIXM';
+// const TOKEN = '5588149760:AAH3L-JFkrrL6-at7c-j-1uQx2VtThBOESU';
 const hussein = '245853116';
 const saleh = '312877637'
 const deaa = '496497144'
 
 const users = [hussein, saleh, deaa]
+
 // Create a new bot instance
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -100,22 +105,28 @@ function scrapeAll() {
 			console.log('Connected to database');
 			console.log(date);
 			const syrEdu = await scrape('https://www.facebook.com/syr.edu1/')
+			const syrEduMembers = await getChannelMembers('syr_edu')
 			console.log(syrEdu);
-			updateData(client, "سوريانا التعليمية", parseFloat(syrEdu.slice(0, -16).replace(/,/g, '')), date, 1, 'syr_edu')
+			console.log(syrEduMembers);
+			updateData(client, "سوريانا التعليمية", parseFloat(syrEdu.slice(0, -16).replace(/,/g, '')), date, 1, 'syr_edu',syrEduMembers)
 			const bac = await scrape('https://www.facebook.com/bakaloria.syria/')
+			const bacMembers = await getChannelMembers('Bacaloria')
 			console.log(bac);
-			updateData(client, "بكالوريا سوريا", parseFloat(bac.slice(0, -16).replace(/,/g, '')), date, 2, 'bac')
+			console.log(bacMembers);
+			updateData(client, "بكالوريا سوريا", parseFloat(bac.slice(0, -16).replace(/,/g, '')), date, 2, 'bac',bacMembers)
 			const syr = await scrape('https://www.facebook.com/syducational/')
+			const syrMembers = await getChannelMembers('syriaST')
 			console.log(syr);
-			updateData(client, "سوريا التعليمية", parseFloat(syr.slice(0, -16).replace(/,/g, '')), date, 3, 'syr')
+			console.log(syrMembers);
+			updateData(client, "سوريا التعليمية", parseFloat(syr.slice(0, -16).replace(/,/g, '')), date, 3, 'syr',syrMembers)
 			client.release();
 		}
 	});
 }
 
-function updateData(client, name, likes, date, id, table) {
+function updateData(client, name, likes, date, id, table,members) {
 	const updateQuery = `UPDATE public.pages SET name='${name}', likes=${likes}, date='${date}' WHERE id=${id};`;
-	const insertQuery = `INSERT INTO public.${table} (name, likes, date) VALUES ('${name}', ${likes}, '${date}');`
+	const insertQuery = `INSERT INTO public.${table} (name, likes, date,members) VALUES ('${name}', ${likes}, '${date}',${members});`
 	client.query(updateQuery, (err, result) => {
 		if (err) {
 			console.error('Error executing query', err.stack);
@@ -148,7 +159,7 @@ function selectData(res, table) {
 					console.error('Error executing query', err.stack);
 				} else {
 					// Display the results
-					result.rows.forEach(row => data.push({ "id": row.id, "name": row.name, "likes": row.likes, "date": row.date }));
+					result.rows.forEach(row => data.push({ "id": row.id, "name": row.name, "likes": row.likes,"members" : row.members ,"date": row.date }));
 					res.send(data)
 					res.end()
 				}
@@ -221,19 +232,7 @@ const sendTelegram = () => {
 					});
 			}, 60000);
 
-		} else if(msg['text'] == "سرعة") {
-			bot.sendMessage(msg['chat']['id'], 'يتم الحصول على السرعة')
-			takeSpeedScreen()
-			setTimeout(() => {
-				bot.sendPhoto(msg['chat']['id'], 'speed1.png')
-					.then(() => {
-						console.log('Photo sent successfully');
-					})
-					.catch((error) => {
-						console.error(error);
-					});
-			}, 60000);
-		}else{
+		} else{
 			bot.sendMessage(msg['chat']['id'], 'ارسل كلمة احصائيات')
 		}
 
@@ -259,27 +258,12 @@ shedule.scheduleJob("8 21 * * *", function () {
 })
 
 
-const takeSpeedScreen = async () => {
-	const browser = await puppeteer.launch();
-	const page = await browser.newPage();
-
-	await page.goto('https://fast.com', { timeout: 60000 });
-console.log(1);
-await new Promise(resolve => setTimeout(resolve, 5000));
-
-
-console.log(2);
-await page.setViewport({ width: 1920, height: 1080 });
-
-await new Promise(resolve => setTimeout(resolve, 35000));
-
-	console.log(3);
-	
-	await page.screenshot({
-		path: 'speed1.png',
-	});
-	
-	console.log(4);
-	await browser.close();
-	console.log('screenshot taken');
+const getChannelMembers = async (page)=>{
+	const data = await axios.get(`https://t.me/${page}/?pagehidden=false`);
+	const html = data.data
+	const $ = cheerio.load(html);
+	const count =$('.tgme_page_extra').text();
+	const members = Number(count.replace(' ','').slice(0,-12));
+	return members
 }
+
