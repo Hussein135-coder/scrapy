@@ -193,17 +193,16 @@ await page.setViewport({ width: 1920, height: 1080 });
 
 await new Promise(resolve => setTimeout(resolve, 35000));
 
-	const element = await page.$('.relative.overflow-hidden.shadow-card');
-	const boundingBox = await element.boundingBox();
+	const [element1] = await page.$$('.relative.overflow-hidden.shadow-card');
+	const boundingBox1 = await element1.boundingBox();
 	console.log(3);
-
 	await page.screenshot({
 		path: 'syr.png',
 		clip: {
-		  x: boundingBox.x,
-		  y: boundingBox.y,
-		  width: boundingBox.width,
-		  height: boundingBox.height,
+		  x: boundingBox1.x,
+		  y: boundingBox1.y,
+		  width: boundingBox1.width,
+		  height: boundingBox1.height * 2 + 80,
 		},
 	  });
 
@@ -266,4 +265,3 @@ const getChannelMembers = async (page)=>{
 	const members = Number(count.replace(' ','').slice(0,-12));
 	return members
 }
-
