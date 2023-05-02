@@ -57,10 +57,7 @@ app.get('/bac', async (req, res) => {
 app.get('/syr', async (req, res) => {
 	selectData(res, 'syr')
 })
-// Speed test
-app.get('/speed', async (req, res) => {
-	takeSpeedScreen()
-})
+
 // Port Number
 const PORT = process.env.PORT || 5000;
 
@@ -92,11 +89,14 @@ async function scrape(url) {
 
 function scrapeAll() {
 	const d = new Date();
-	const year = d.getFullYear().toString();
-	const month = (d.getMonth() + 1).toString().padStart(2, '0');
-	const day = (d.getDate() + 1).toString().padStart(2, '0');
-	const date = `${year}/${month}/${day}`;
+	const tomorrow = new Date(d)
+	tomorrow.setDate(tomorrow.getDate() + 1)
+	
+	const year = tomorrow.getFullYear().toString();
+	const month = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
+	const day = (tomorrow.getDate()).toString().padStart(2, '0');
 
+	const date = `${year}/${month}/${day}`;
 
 	pool.connect(async (err, client, done) => {
 		if (err) {
@@ -152,7 +152,7 @@ function selectData(res, table) {
 		} else {
 			console.log('Connected to database');
 
-			const selectQuery = `SELECT * FROM ${table}`;
+			const selectQuery = `SELECT * FROM ${table} ORDER BY id`;
 
 			client.query(selectQuery, (err, result) => {
 				if (err) {
@@ -252,7 +252,7 @@ const sendPhotoTelegram = () => {
 
 }
 
-shedule.scheduleJob("8 21 * * *", function () {
+shedule.scheduleJob("10 21 * * *", function () {
 	sendPhotoTelegram()
 })
 
@@ -265,3 +265,5 @@ const getChannelMembers = async (page)=>{
 	const members = Number(count.replace(' ','').slice(0,-12));
 	return members
 }
+
+
