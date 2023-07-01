@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <label for="city">
+      City:
+      <input id="city" type="text" placeholder="number" />
+      <select name="city" id="city">
+        <option value="1" selected>دمشق</option>
+        <option value="2">ريف دمشق</option>
+        <option value="3">القنيطرة</option>
+        <option value="4">درعا</option>
+        <option value="5">السويداء</option>
+        <option value="6">حمص</option>
+        <option value="7">حماه</option>
+        <option value="8">حلب</option>
+        <option value="9">إدلب</option>
+        <option value="10">اللاذقية</option>
+        <option value="11">طرطوس</option>
+        <option value="12">دير الزور</option>
+        <option value="13">الحسكة</option>
+        <option value="14">الرقة</option>
+      </select>
+    </label>
+    <label for="cityInput">
+      City Input
+      <input id="cityInput" type="text" placeholder="cityInput" />
+    </label>
+    <label for="num">
+      Number:
+      <input id="num" type="text" placeholder="number" />
+    </label>
+    <label for="numInput">
+      Number Input:
+      <input id="numInput" type="text" placeholder="numInput" />
+    </label>
+    <label for="category">
+      Category:
+      <input id="category" type="text" placeholder="category" />
+    </label>
+    <label for="baseUrl">
+      Base Url:
+      <input id="baseUrl" type="text" placeholder="baseUrl" />
+    </label>
+    <label for="urlEnd">
+      Url End:
+      <input id="urlEnd" type="text" placeholder="urlEnd" />
+    </label>
+
+    <button
+      style="
+        background-color: rgb(44, 44, 253);
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+      "
+      id="info"
+    >
+      Get Info
+    </button>
+    <div id="information"></div>
+    <script>
+      const city = document.getElementById("city");
+      const cityInput = document.getElementById("cityInput");
+      const num = document.getElementById("num");
+      const numInput = document.getElementById("numInput");
+      const baseUrl = document.getElementById("baseUrl");
+      const category = document.getElementById("category");
+      const urlEnd = document.getElementById("urlEnd");
+
+      const infoBtn = document.getElementById("info");
+      const information = document.getElementById("information");
+      infoBtn.addEventListener("click", async function () {
+        infoBtn.textContent = "Loading...";
+        try {
+          const res = await fetch(
+            `https://syr-scraper.onrender.com/info?url=${baseUrl}/${category}/${urlEnd}.php&city=${city}&id=${num}`
+          );
+          console.log(res);
+          const { cityInput, numInput, urlEnd } = await res.json();
+          console.log(cityInput);
+          information.innerHTML = `<h1>Num:${numInput}</h1>
+            <h1>City:${cityInput}</h1>
+            <h1>Url End:${urlEnd}</h1>`;
+          infoBtn.textContent = "Get Info";
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    </script>
+  </body>
+</html>

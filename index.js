@@ -20,7 +20,7 @@ app.get('/result', async (req, res) => {
 	const urlEnd = req.query.urlEnd;
 
 try{
-	const data = await getResult(baseUrl,category,numInput,id ,cityInput,city,urlEnd)
+	const data = await getResult(baseUrl,numInput,id ,cityInput,city)
 	res.json({"marks" : data[0], "user" : data[1]})
 }catch(err){
 	res.json({"Error" : err.message});
@@ -78,8 +78,8 @@ const getHtml = async (url) =>{
 };
 
 //Get Result
-const getResult = async (baseUrl,category,numInput,num ,cityInput,city,urlEnd)=>{
-	const url = `${baseUrl}/${category}/${urlEnd}.php?${cityInput}=${city}&${numInput}=${num}`
+const getResult = async (baseUrl,numInput,num ,cityInput,city)=>{
+	const url = `${baseUrl}?${cityInput}=${city}&${numInput}=${num}`
 	const data = await axios.get(url);
 	const html = data.data
 
