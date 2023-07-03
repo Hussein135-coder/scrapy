@@ -9,7 +9,7 @@ const shedule = require('node-schedule');
 const Pages = require('./pages')
 const mongoose = require('mongoose');
 
-const bot = new TelegramBot('6341924400:AAHPVb8kGy1Asuwy1Gu45763biySzQiVhkI',{polling: true});
+//const bot = new TelegramBot('6341924400:AAHPVb8kGy1Asuwy1Gu45763biySzQiVhkI',{polling: true});
 
 const hussein = '245853116';
 const saleh = '312877637'
@@ -253,7 +253,7 @@ async function PagesPosts(){
 		await Pages.findOneAndUpdate({_id: post._id} ,  newPost)
 		//Pages.updateOne({_id: post._id} , {$set: newPost})
 	const msg = `<b>اسم الصفحة:</b> ${post.name}\n<b>المنشور:</b> ${pagePost.post}\n<b>رابط المنشور:</b> ${pagePost.link}`
-		sendMessageTelegram(msg)
+		//sendMessageTelegram(msg)
 		})
 	} catch (error) {
 		console.log(error)
@@ -264,14 +264,14 @@ shedule.scheduleJob("* * * * *", function () {
 	connectDb()
 })
 
-const sendMessageTelegram = (msg) => {
-	users.forEach(user => {
-		bot.sendMessage(user, msg , { parse_mode: 'HTML' })
-			.then(() => {
-				console.log('Message sent successfully');
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	});
-}
+// const sendMessageTelegram = (msg) => {
+// 	users.forEach(user => {
+// 		bot.sendMessage(user, msg , { parse_mode: 'HTML' })
+// 			.then(() => {
+// 				console.log('Message sent successfully');
+// 			})
+// 			.catch((error) => {
+// 				console.error(error);
+// 			});
+// 	});
+// }
