@@ -612,8 +612,19 @@ async function PagesPosts(page){
 		// const posts = await Pages.find();
 		const posts = await readJson()
 		posts.forEach(async (post,i) => {
-			await onePost(posts,post,page)
-		
+			//await onePost(posts,post,page)
+		const pagePost = await scrapeFacebookPost(post.link,page);
+
+		if(pagePost.post == null || pagePost.post == post.post ){
+			console.log("same",pagePost.post,post.name)
+			return;
+		}
+		console.log(post.name,"out")
+		post.post = pagePost.post;
+		post.postLink = pagePost.link;
+	const msg = `<b>اسم الصفحة:</b> ${post.name}\n<b>المنشور:</b> ${pagePost.post}\n<b>رابط المنشور:</b> ${pagePost.link}`
+		// sendMessageTelegram(msg)
+		writeJson(posts)
 		})
 		// for (let i = 0; i < posts.length; i++) {
 		// 	await onePost(posts,posts[i],page)		
