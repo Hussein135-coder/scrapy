@@ -625,10 +625,11 @@ const onePost = async (posts,post,page)=>{
 		// sendMessageTelegram(msg)
 		writeJson(posts)
 }
-// shedule.scheduleJob("* * * * *", function () {
+shedule.scheduleJob("*/5 * * * *", function () {
 // 	// connectDb()
 // 	//PagesPosts();
-// })
+	  loginWithCookies();
+ })
 //PagesPosts();
 // const sendMessageTelegram = (msg) => {
 // 	users.forEach(user => {
@@ -725,7 +726,7 @@ async function loginWithCookies() {
   }
   
   // Call the login function
-  loginWithCookies();
+
 
   function delayExecution(ms) {
 	return new Promise(resolve => {
