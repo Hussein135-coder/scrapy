@@ -625,11 +625,11 @@ const onePost = async (posts,post,page)=>{
 		// sendMessageTelegram(msg)
 		writeJson(posts)
 }
-shedule.scheduleJob("*/5 * * * *", function () {
+//shedule.scheduleJob("*/5 * * * *", function () {
 // 	// connectDb()
 // 	//PagesPosts();
-	  loginWithCookies();
- })
+	//  loginWithCookies();
+// })
 //PagesPosts();
 // const sendMessageTelegram = (msg) => {
 // 	users.forEach(user => {
@@ -675,16 +675,20 @@ async function loginWithCookies() {
 		  console.log('Saved cookies are invalid. Logging in with email and password...');
 		}
 	  }
-  console.log('facebook')
+  		console.log('facebook')
 	  // Login with email and password
 	  await page.goto('https://www.facebook.com/');
+		console.log('in facebook')
 	  await page.waitForSelector('#email');
-	  await page.type('#email', process.env.Email); // Replace with your actual email
+		console.log('waited email')
+	  await page.type('#email', process.env.Email);
+		console.log('typed email')// Replace with your actual email
 	  await page.type('#pass', process.env.Pass); // Replace with your actual password
-	  console.log('pass')
+	  console.log('typed pass')
 	  await page.screenshot({ path: 'test.png' });
-	  console.log('screen')
+	  console.log('screen 1')
 	  await page.click('button[name = "login"]');
+		console.log('clicked login')
 	  await page.waitForNavigation();
 	  await delayExecution(5000)
 	  await page.screenshot({ path: 'test1.png' });
@@ -735,3 +739,5 @@ async function loginWithCookies() {
 	  }, ms); // 10 seconds delay
 	});
   }
+
+  loginWithCookies();
