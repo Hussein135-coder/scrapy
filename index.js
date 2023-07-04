@@ -243,7 +243,7 @@ async function scrapeFacebookPost(pageUrl) {
 		await page.goto(pageUrl, { timeout: 60000 });
 		console.log('opend page')
 		// const postSelector = await page.waitForSelector('div[data-ad-preview="message"], div[dir="auto"]');
-		console.log('before wait'
+		console.log('before wait')
 		await delayExecution();
 		console.log('after wait')
 		const postSelector = await page.waitForSelector('div');		
@@ -260,7 +260,8 @@ async function scrapeFacebookPost(pageUrl) {
 		// const link = await linkSelector.evaluate(el => el.href);
 
 		const post = postContent.slice(postContent.indexOf("with Public") + "with Public".length ,postContent.indexOf("All reactions"))
-		console.log(post)
+		console.log(postContent,"Contennnnt")
+		console.log(post,"pooost")
 		const link = pageUrl;
 		await browser.close();
 		console.log(time ,"time")
