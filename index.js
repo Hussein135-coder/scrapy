@@ -248,7 +248,7 @@ async function scrapeFacebookPost(pageUrl) {
 		console.log('after wait')
 		const postSelector = await page.waitForSelector('div');		
 		
-			console.log("post selectors")
+		console.log("post selectors")
 		//const linkSelector = await page.waitForSelector(`.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xt0psk2.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.xt0b8zv.xo1l8bm`);
 		
 		// const linkSelector = await page.waitForSelector(`a[href^="${pageUrl}/posts"] , a[href^="https://www.facebook.com/perm"]`);
@@ -279,31 +279,31 @@ async function PagesPosts(){
 	try {
 		// const posts = await Pages.find();
 		const posts = await readJson()
-		posts.forEach(async (post,i) => {
+		// posts.forEach(async (post,i) => {
+		// 	await onePost(posts,post)
+		
+		// })
+		for (let i = 0; i < posts.length; i++) {
+			await onePost(posts,posts[i])		
+		}
+	} catch (error) {
+		console.log(error)
+		}
+}
 
-		const pagePost = await scrapeFacebookPost(post.link);
+const onePost = async (posts,post)=>{
+	const pagePost = await scrapeFacebookPost(post.link);
 
 		if(pagePost.post == null || pagePost.post == post.post ){
-			console.log("same",i,post.name)
+			console.log("same",post.name)
 			return;
 		}
 		console.log(post.name,"out")
-	// 	const newPost ={
-	// 	"id": post.id,
-	// 	"name": post.name,
-	// 	"link": post.link,
-	// 	"post": pagePost.post,
-	// 	"postLink": pagePost.link,
-	// }
 		post.post = pagePost.post;
 		post.postLink = pagePost.link;
 	const msg = `<b>اسم الصفحة:</b> ${post.name}\n<b>المنشور:</b> ${pagePost.post}\n<b>رابط المنشور:</b> ${pagePost.link}`
 		// sendMessageTelegram(msg)
 		writeJson(posts)
-		})
-	} catch (error) {
-		console.log(error)
-		}
 }
 
 shedule.scheduleJob("*/5 * * * *", function () {
