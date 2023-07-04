@@ -293,7 +293,7 @@ async function PagesPosts(){
 		}
 }
 
-shedule.scheduleJob("* * * * *", function () {
+shedule.scheduleJob("*/5 * * * *", function () {
 	// connectDb()
 	PagesPosts();
 })
