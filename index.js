@@ -3,84 +3,118 @@ const express = require('express');
 const axios = require('axios')
 const cors = require('cors');
 const { JSDOM } = require('jsdom');
-const TelegramBot = require('node-telegram-bot-api');
+// const TelegramBot = require('node-telegram-bot-api');
 const puppeteer = require('puppeteer');
 const shedule = require('node-schedule');
 const Pages = require('./pages')
-const mongoose = require('mongoose');
-
-//const bot = new TelegramBot('6341924400:AAHPVb8kGy1Asuwy1Gu45763biySzQiVhkI',{polling: true});
+// const mongoose = require('mongoose');
+const fs = require('fs/promises');
+// const bot = new TelegramBot('6341924400:AAHPVb8kGy1Asuwy1Gu45763biySzQiVhkI',{polling: true});
 
 const hussein = '245853116';
 const saleh = '312877637'
 const deaa = '496497144'
 
 const users = [hussein, saleh, deaa]
+const filePath = './data.json';
+// async function connectDb (){
+// 	try {
+// 			await mongoose.connect(process.env.URI)
+// 			console.log("connected")
+// 			PagesPosts()
+// 	} catch (error) {
+// 			console.log(error)
+// 	}
+// }
 
-async function connectDb (){
-	try {
-			await mongoose.connect(process.env.URI)
-			console.log("connected")
-			PagesPosts()
-	} catch (error) {
-			console.log(error)
-	}
+const readJson = async ()=> {
+try {
+	 const dataFromFile = await fs.readFile(filePath)
+		// Parse the JSON data
+	 const jsonData = await JSON.parse(dataFromFile);
+	  
+		// Use the parsed JSON data
+		console.log(jsonData);
+		return jsonData;
+} catch (error) {
+	console.log(error)
+}
+	
 }
 
 
+const writeJson = (dataToWrite)=> {
+	try {
+		const jsonData = JSON.stringify(dataToWrite, null, 2);
+
+// Write the JSON string to the file
+fs.writeFile(filePath, jsonData, 'utf8', (err) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  console.log('File has been written successfully.');
+});
+	} catch (error) {
+		console.log(error)
+	}
+		
+	}
 
 const app = express();
 
 app.use(
-	cors({origin: ['https://syria-res.blogspot.com', 'https://www.syr-edu.com']})
+	// cors({origin: ['https://syria-res.blogspot.com', 'https://www.syr-edu.com']})
+	cors()
 );
-app.get('/add', async (req, res) => {
+// app.get('/add', async (req, res) => {
 
-	try {
-		const name = req.query.id;
-		const link = req.query.link;
-		const post =  req.query.post;
-		const postLink =req.query.postLink;
-		let page = await new Pages({name,link,post,postLink}).save();
-		console.log(page)
-		return res.json(page);
-	} catch (error) {
-		console.log(error)
-		return res.json({message: "error"})
-	}
-})
+// 	try {
+// 		const name = req.query.id;
+// 		const link = req.query.link;
+// 		const post =  req.query.post;
+// 		const postLink =req.query.postLink;
+// 		let page = await new Pages({name,link,post,postLink}).save();
+// 		console.log(page)
+// 		return res.json(page);
+// 	} catch (error) {
+// 		console.log(error)
+// 		return res.json({message: "error"})
+// 	}
+// })
 
-app.get('/posts', async (req, res) => {
-	try {
-		const posts = await Pages.find();
-		return res.json(posts);
-	} catch (error) {
-		console.log(error)
-		return res.json({message: "error"})
-		}
-	}
-)
-app.get('/update', async (req, res) => {
-	try {
-		const newPost ={
-			"_id": req.query.id,
-			"name":req.query.name,
-			"link": req.query.link,
-			"post": req.query.post,
-			"postLink": req.query.postLink,
-			"createdAt": "2023-07-02T10:53:09.538Z",
-			"updatedAt": "2023-07-02T10:53:09.538Z",
-			"__v": 0
-		}
+// app.get('/posts', async (req, res) => {
+// 	try {
+// 		const posts = await Pages.find();
+// 		return res.json(posts);
+// 	} catch (error) {
+// 		console.log(error)
+// 		return res.json({message: "error"})
+// 		}
+// 	}
+// )
+// app.get('/update', async (req, res) => {
+// 	try {
+// 		const newPost ={
+// 			"_id": req.query.id,
+// 			"name":req.query.name,
+// 			"link": req.query.link,
+// 			"post": req.query.post,
+// 			"postLink": req.query.postLink,
+// 			"createdAt": "2023-07-02T10:53:09.538Z",
+// 			"updatedAt": "2023-07-02T10:53:09.538Z",
+// 			"__v": 0
+// 		}
 
-		const response = await Pages.findOneAndUpdate({_id: '64a16ea0eaad82d88c8f23b5'} ,  newPost)
-		return res.json({message: response});
-	} catch (error) {
-		console.log(error)
-		return res.json({message: "error"})
-		}
-	}
-)
+// 		const response = await Pages.findOneAndUpdate({_id: '64a16ea0eaad82d88c8f23b5'} ,  newPost)
+// 		return res.json({message: response});
+// 	} catch (error) {
+// 		console.log(error)
+// 		return res.json({message: "error"})
+// 		}
+// 	}
+// )
 
 
 
@@ -196,27 +230,29 @@ async function scrapeFacebookPost(pageUrl) {
 			time++;
 		}, 1000);
 		const browser = await puppeteer.launch();
+		console.log('launched')
 		const page = await browser.newPage();
+		console.log('newPage')
 
 		await page.goto(pageUrl, { timeout: 60000 });
-
-		const postSelector = await page.waitForSelector('div[data-ad-preview="message"], div[dir="auto"]');
-		const linkSelector = await page.waitForSelector(`a[href^="${pageUrl}/posts"] , a[href^="https://www.facebook.com/perm"]`);
+		console.log('opend page')
+		// const postSelector = await page.waitForSelector('div[data-ad-preview="message"], div[dir="auto"]');
+		const postSelector = await page.waitForSelector('.x1iorvi4.x1pi30zi.x1l90r2v.x1swvt13');		
+		
+			console.log("post selectors")
+		const linkSelector = await page.waitForSelector(`.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xt0psk2.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.xt0b8zv.xo1l8bm`);
+		
+		// const linkSelector = await page.waitForSelector(`a[href^="${pageUrl}/posts"] , a[href^="https://www.facebook.com/perm"]`);
+	
+		console.log("link selectors")
+		
 
 		const post = await postSelector.evaluate(el => el.textContent);
 		const link = await linkSelector.evaluate(el => el.href);
 
-	// 	if(post.includes('عرض المزيد')){
-	// 		await page.evaluate(() => {
-	// 			document.querySelectorAll('div[role="button"]')[6].click()
-	// });
-	// postSelector = await page.waitForSelector('div[data-ad-preview="message"]');
-		//}
 		await browser.close();
+		console.log(time ,"time")
 		clearInterval(calcTime);
-		console.log(time)
-		console.log(post)
-		console.log(link)
 		return {post,link};
 	} catch (error) {
 		console.log(error)
@@ -228,32 +264,29 @@ async function scrapeFacebookPost(pageUrl) {
 
 async function PagesPosts(){
 	try {
-		const posts = await Pages.find();
-		
+		// const posts = await Pages.find();
+		const posts = await readJson()
 		posts.forEach(async (post,i) => {
-		console.log("loop",i+1)
+
 		const pagePost = await scrapeFacebookPost(post.link);
-		console.log(pagePost.post ,"Page post");
-		console.log(post.post ,"DB");
+
 		if(pagePost.post == null || pagePost.post == post.post ){
-			console.log("same",i,pagePost.link)
+			console.log("same",i,post.name)
 			return;
 		}
-		const newPost ={
-		"_id": post._id,
-		"name": post.name,
-		"link": post.link,
-		"post": pagePost.post,
-		"postLink": pagePost.link,
-		"createdAt": "2023-07-02T10:53:09.538Z",
-		"updatedAt": "2023-07-02T10:53:09.538Z",
-		"__v": 0
-	}
-		console.log(newPost)
-		await Pages.findOneAndUpdate({_id: post._id} ,  newPost)
-		//Pages.updateOne({_id: post._id} , {$set: newPost})
+		console.log(post.name,"out")
+	// 	const newPost ={
+	// 	"id": post.id,
+	// 	"name": post.name,
+	// 	"link": post.link,
+	// 	"post": pagePost.post,
+	// 	"postLink": pagePost.link,
+	// }
+		post.post = pagePost.post;
+		post.postLink = pagePost.link;
 	const msg = `<b>اسم الصفحة:</b> ${post.name}\n<b>المنشور:</b> ${pagePost.post}\n<b>رابط المنشور:</b> ${pagePost.link}`
-		//sendMessageTelegram(msg)
+		// sendMessageTelegram(msg)
+		writeJson(posts)
 		})
 	} catch (error) {
 		console.log(error)
@@ -261,7 +294,8 @@ async function PagesPosts(){
 }
 
 shedule.scheduleJob("* * * * *", function () {
-	connectDb()
+	// connectDb()
+	PagesPosts();
 })
 
 // const sendMessageTelegram = (msg) => {
