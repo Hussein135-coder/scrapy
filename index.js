@@ -222,7 +222,13 @@ const getResult = async (baseUrl,numInput,num ,cityInput,city)=>{
 	return [results , student];
 	
 }
-
+function delayExecution(time) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, time * 1000); // 10 seconds delay
+  });
+}
 async function scrapeFacebookPost(pageUrl) {
 	try {
 		let time= 0 ;
@@ -237,6 +243,7 @@ async function scrapeFacebookPost(pageUrl) {
 		await page.goto(pageUrl, { timeout: 60000 });
 		console.log('opend page')
 		// const postSelector = await page.waitForSelector('div[data-ad-preview="message"], div[dir="auto"]');
+		await delayExecution(10);
 		const postSelector = await page.waitForSelector('div');		
 		
 			console.log("post selectors")
