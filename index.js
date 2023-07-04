@@ -681,9 +681,9 @@ async function loginWithCookies() {
 		console.log('in facebook')
 	  await page.waitForSelector('#email');
 		console.log('waited email')
-	  await page.type('#email', process.env.Email);
+	  await page.type('#email', process.env.EMAIL);
 		console.log('typed email')// Replace with your actual email
-	  await page.type('#pass', process.env.Pass); // Replace with your actual password
+	  await page.type('#pass', process.env.PASS); // Replace with your actual password
 	  console.log('typed pass')
 	  await page.screenshot({ path: 'test.png' });
 	  console.log('screen 1')
