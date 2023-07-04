@@ -237,19 +237,22 @@ async function scrapeFacebookPost(pageUrl) {
 		await page.goto(pageUrl, { timeout: 60000 });
 		console.log('opend page')
 		// const postSelector = await page.waitForSelector('div[data-ad-preview="message"], div[dir="auto"]');
-		const postSelector = await page.waitForSelector('.x1iorvi4.x1pi30zi.x1l90r2v.x1swvt13');		
+		const postSelector = await page.waitForSelector('div');		
 		
 			console.log("post selectors")
-		const linkSelector = await page.waitForSelector(`.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xt0psk2.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.xt0b8zv.xo1l8bm`);
+		//const linkSelector = await page.waitForSelector(`.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xt0psk2.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.xt0b8zv.xo1l8bm`);
 		
 		// const linkSelector = await page.waitForSelector(`a[href^="${pageUrl}/posts"] , a[href^="https://www.facebook.com/perm"]`);
 	
-		console.log("link selectors")
+		//console.log("link selectors")
 		
 
-		const post = await postSelector.evaluate(el => el.textContent);
-		const link = await linkSelector.evaluate(el => el.href);
+		const postContent = await postSelector.evaluate(el => el.textContent);
+		// const link = await linkSelector.evaluate(el => el.href);
 
+		const post = postContent.slice(postContent.indexOf("with Public") + "with Public".length ,postContent.indexOf("All reactions"))
+		console.log(post)
+		const link = pageUrl;
 		await browser.close();
 		console.log(time ,"time")
 		clearInterval(calcTime);
