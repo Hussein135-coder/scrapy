@@ -636,11 +636,11 @@ const onePost = async (posts,post,page)=>{
 		// sendMessageTelegram(msg)
 		writeJson(posts)
 }
-shedule.scheduleJob("*/5 * * * *", function () {
-// 	// connectDb()
-// 	//PagesPosts();
-	  loginWithCookies();
- })
+// shedule.scheduleJob("*/5 * * * *", function () {
+// // 	// connectDb()
+// // 	//PagesPosts();
+// 	  loginWithCookies();
+//  })
 //PagesPosts();
 // const sendMessageTelegram = (msg) => {
 // 	users.forEach(user => {
