@@ -409,7 +409,19 @@ app.use(
 // 		return res.json({message: "error"})
 // 	}
 // })
+const path = require('path');
 
+const getImage =(name)=>{
+
+	return path.join(__dirname, name + '.png');
+}
+app.get('/image', (req, res) => {
+	if(req.query.name){
+		res.sendFile(getImage(req.query.name));
+	}else{
+		res.send('not Found');
+	}
+  });
 // app.get('/posts', async (req, res) => {
 // 	try {
 // 		const posts = await Pages.find();
@@ -691,12 +703,15 @@ async function loginWithCookies() {
 		console.log('clicked login')
 	  await page.waitForNavigation();
 	  await delayExecution(5000)
+		console.log('before check login');
 	  await page.screenshot({ path: 'test1.png' });
+		console.log('talen screen test1.png');
 	  const content = await page.waitForSelector('div');
 	  console.log(content)
 	  const myName = await content.evaluate(el => el.textContent);
 	  // Check if login was successful
 	  const isLoggedIn = myName.includes('Hussein');
+		console.log(isLoggedIn,'logged in');
 	  if (isLoggedIn) {
 		console.log('Logged in successfully.');
   
