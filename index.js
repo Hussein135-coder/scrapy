@@ -611,13 +611,13 @@ async function PagesPosts(page){
 	try {
 		// const posts = await Pages.find();
 		const posts = await readJson()
-		// posts.forEach(async (post,i) => {
-		// 	await onePost(posts,post)
+		posts.forEach(async (post,i) => {
+			await onePost(posts,post,page)
 		
-		// })
-		for (let i = 0; i < posts.length; i++) {
-			await onePost(posts,posts[i],page)		
-		}
+		})
+		// for (let i = 0; i < posts.length; i++) {
+		// 	await onePost(posts,posts[i],page)		
+		// }
 	} catch (error) {
 		console.log(error)
 		}
@@ -637,11 +637,11 @@ const onePost = async (posts,post,page)=>{
 		// sendMessageTelegram(msg)
 		writeJson(posts)
 }
-//shedule.scheduleJob("*/5 * * * *", function () {
+shedule.scheduleJob("*/5 * * * *", function () {
 // 	// connectDb()
 // 	//PagesPosts();
-	//  loginWithCookies();
-// })
+	  loginWithCookies();
+ })
 //PagesPosts();
 // const sendMessageTelegram = (msg) => {
 // 	users.forEach(user => {
@@ -755,4 +755,4 @@ async function loginWithCookies() {
 	});
   }
 
-  loginWithCookies();
+  // loginWithCookies();
